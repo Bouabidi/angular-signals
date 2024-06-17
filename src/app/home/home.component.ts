@@ -35,16 +35,16 @@ export class HomeComponent {
     // 1- define all signal dependencies
     const courses = this.courses();
     // 2- define the computation
-    return courses.filter((course) => {
-      course.category === 'BEGINNER';
-    });
+    return courses.filter(course => 
+      course.category === "BEGINNER"
+    );
   });
 
   advancedCourses = computed(() => {
     const courses = this.courses();
-    return courses.filter((course) => {
-      course.category === 'ADVANCED';
-    });
+    return courses.filter(course => 
+      course.category === "ADVANCED"
+    );
   });
 
   constructor() {
@@ -53,7 +53,7 @@ export class HomeComponent {
       console.log(`Advanced courses: `, this.advancedCourses())
     });
     this.loadCourses().then(() =>
-      console.log(`all courses loaded:`, this.courses)
+      console.log(`all courses loaded:`, this.courses())
     );
   }
 
