@@ -1,7 +1,7 @@
 
 ##  Modern Angular With Signals Course
 
-This repository contains the code of the [Modern Angular With Signals Course](https://angular-university.io/course/angular-signals-course).
+This repository contains the code of the [Modern Angular With Signals Course]([https://github.com/Bouabidi/angular-signals).
 
 This uses Angular 18:
 
