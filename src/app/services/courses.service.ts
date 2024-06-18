@@ -48,7 +48,7 @@ export class CoursesService {
     return firstValueFrom(course);
   }
 
-  async delteCourse(courseId: string) {
+  async deleteCourse(courseId: string) {
     const delete$ = this.http.delete(`${this.env.apiRoot}/courses/${courseId}`);
     return firstValueFrom(delete$);
   }
