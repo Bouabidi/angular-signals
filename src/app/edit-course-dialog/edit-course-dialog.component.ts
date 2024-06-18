@@ -39,18 +39,19 @@ export class EditCourseDialogComponent {
 
   courseService = inject(CoursesService);
 
-  category = signal<CourseCategory>('BEGINNER');
+  category = signal<CourseCategory>("BEGINNER");
 
   constructor() {
     this.form.patchValue({
       title: this.data?.course?.title,
       longDescription: this.data?.course?.longDescription,
-      iconUrl: this.data?.course?.iconUrl,
+      iconUrl: this.data?.course?.iconUrl
     });
-    this.category.set(this.data?.course?.category ?? 'BEGINNER');
+    this.category.set(this.data?.course?.category ?? "BEGINNER");
     effect(() => {
-      console.log(`Course Category: ${this.category()}`);
-    });
+      console.log(`Course category bi-directional binding:
+      ${this.category()}`);
+    })
   }
 
   onClose() {
@@ -62,6 +63,19 @@ export class EditCourseDialogComponent {
     courseProps.category = this.category();
     if (this.data?.mode === 'update') {
       await this.saveCourse(this.data?.course!.id, courseProps);
+    }
+    else if(this.data?.mode === 'create') {
+      await this.createCourse(courseProps);
+    }
+  }
+  async createCourse(courseProps: Partial<Course>) {
+    try{
+      const newCourse = await this.courseService.createCourse(courseProps);
+      this.dialogRef.close(newCourse);
+    }
+    catch(err){
+      console.error(err);
+      alert('error creating the course');
     }
   }
 

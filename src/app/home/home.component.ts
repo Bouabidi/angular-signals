@@ -19,6 +19,7 @@ import {
   outputToObservable,
   outputFromObservable,
 } from '@angular/core/rxjs-interop';
+import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.component';
 
 @Component({
   selector: 'home',
@@ -30,6 +31,7 @@ import {
 export class HomeComponent {
   courses = signal<Course[]>([]);
   coursesService = inject(CoursesService);
+  dialog = inject(MatDialog);
 
   beginnerCourses = computed(() => {
     // 1- define all signal dependencies
@@ -62,7 +64,6 @@ export class HomeComponent {
     }
   }
 
-  
   async onCourseUpdated(updatedCourse: Course) {
     const courses = this.courses();
     const newCourses = courses.map((course) =>
@@ -74,13 +75,23 @@ export class HomeComponent {
     try {
       await this.coursesService.deleteCourse(courseId);
       const courses = this.courses();
-      const newCourses = courses.filter(
-        course => course.id !== courseId)
+      const newCourses = courses.filter((course) => course.id !== courseId);
       this.courses.set(newCourses);
+    } catch (err) {
+      console.error(err);
+      alert(`Error deleting course.`);
     }
-    catch (err) {
-      console.error(err)
-      alert(`Error deleting course.`)
+  }
+
+  async onAddCourse() {
+    const newCourse = await openEditCourseDialog(this.dialog, {
+      mode: 'create',
+      title: 'Create New Course',
+    });
+    if (!newCourse) {
+      return;
     }
+    const newCourses = [...this.courses(), newCourse];
+    this.courses.set(newCourses);
   }
 }
