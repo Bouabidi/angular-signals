@@ -14,7 +14,6 @@ import { CourseCategoryComboboxComponent } from '../course-category-combobox/cou
 import { CourseCategory } from '../models/course-category.model';
 import { firstValueFrom } from 'rxjs';
 
-
 @Component({
   selector: 'edit-course-dialog',
   standalone: true,
@@ -30,32 +29,53 @@ export class EditCourseDialogComponent {
   dialogRef = inject(MatDialogRef);
   data: EditCourseDialogData = inject(MAT_DIALOG_DATA);
 
-  fb= inject(FormBuilder);
+  fb = inject(FormBuilder);
 
   form = this.fb.group({
     title: [''],
     longDescription: [''],
-    iconUrl: ['']
+    iconUrl: [''],
   });
 
-  courseService= inject(CoursesService);
+  courseService = inject(CoursesService);
 
   category = signal<CourseCategory>('BEGINNER');
 
-  constructor(){
+  constructor() {
     this.form.patchValue({
       title: this.data?.course?.title,
       longDescription: this.data?.course?.longDescription,
-      iconUrl: this.data?.course?.iconUrl
+      iconUrl: this.data?.course?.iconUrl,
     });
-    this.category.set(this.data?.course?.category??"BEGINNER");
-    effect(()=>{
+    this.category.set(this.data?.course?.category ?? 'BEGINNER');
+    effect(() => {
       console.log(`Course Category: ${this.category()}`);
-    })
+    });
   }
 
-  onClose(){
+  onClose() {
     this.dialogRef.close();
+  }
+
+  async onSave() {
+    const courseProps = this.form.value as Partial<Course>;
+    courseProps.category = this.category();
+    if (this.data?.mode === 'update') {
+      await this.saveCourse(this.data?.course!.id, courseProps);
+    }
+  }
+
+  async saveCourse(courseId: string, changes: Partial<Course>) {
+    try {
+      const updatedCourse = await this.courseService.saveCourse(
+        courseId,
+        changes
+      );
+      this.dialogRef.close(updatedCourse);
+    } catch (err) {
+      console.error(err);
+      alert(`Failed to save course`);
+    }
   }
 }
 
