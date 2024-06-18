@@ -13,6 +13,7 @@ import { openEditCourseDialog } from '../edit-course-dialog/edit-course-dialog.c
 })
 export class CoursesCardListComponent {
   courses = input.required<Course[]>();
+  courseUpdated = output<Course>();
   dialog = inject(MatDialog);
 
   async onEditCourse(course:Course){
@@ -24,5 +25,10 @@ export class CoursesCardListComponent {
         course
       }
     )
+    if(!newCourse){
+      return;
+    }
+    console.log(`Course edited:`, newCourse);
+    this.courseUpdated.emit(newCourse);
   }
 }
