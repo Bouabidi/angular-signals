@@ -45,6 +45,8 @@ export class HomeComponent {
     return courses.filter((course) => course.category === 'ADVANCED');
   });
 
+  messageService = inject(MessagesService);
+
   constructor() {
     effect(() => {
       console.log(`Beginner courses: `, this.beginnerCourses());
@@ -60,6 +62,10 @@ export class HomeComponent {
       const course = await this.coursesService.loadAllCourses();
       this.courses.set(course.sort(sortCoursesBySeqNo));
     } catch (error) {
+      this.messageService.showMessage(
+        `Error loading courses !`,
+        "error"
+      );
       console.error(error);
     }
   }
